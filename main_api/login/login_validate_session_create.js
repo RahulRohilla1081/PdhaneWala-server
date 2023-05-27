@@ -24,6 +24,7 @@ router.post("/", async function (req, res, next) {
     console.log(req.session);
     let db = await dbConnect();
     var customerFlag;
+    console.log("PASSWORD",formData.PASSWORD);
 
     var data = await db
       .collection("user_db")
@@ -41,6 +42,10 @@ router.post("/", async function (req, res, next) {
         var data_1 = await db
           .collection("user_login")
           .find({ USER_ID: data[0].USER_ID, IS_VERIFIED: true })
+          .toArray();
+        var certificate_template = await db
+          .collection("user_db")
+          .find({ USER_ID: data[0].USER_ID })
           .toArray();
       } else {
         customerFlag = false;
@@ -94,12 +99,17 @@ router.post("/", async function (req, res, next) {
             } else {
               db.collection("sessions").insertOne(insertData);
               // db.collection("customer_db").insertOne({ROLE_ID:["ADMIN"]})45
-              let customer_data = data;
-              customer_data[0].IP_ADDRESS = formData.IP_ADDRESS;
-              customer_data[0].USER_DEVICE = formData.USER_DEVICE;
-              customer_data[0].LAST_ACTIVITY = formData.LAST_ACTIVITY;
-              customer_data[0].ROLE_ID = data_1[0].ROLE_ID;
-              customer_data[0].IS_LOGOUT = false;
+              let user_data = data;
+              user_data[0].IP_ADDRESS = formData.IP_ADDRESS;
+              user_data[0].USER_DEVICE = formData.USER_DEVICE;
+              user_data[0].LAST_ACTIVITY = formData.LAST_ACTIVITY;
+              user_data[0].ROLE_ID = data_1[0].ROLE_ID;
+              user_data[0].IS_LOGOUT = false;
+              if (data[0].ROLE_ID.some((val) => val == "CUSTOMER")) {
+                user_data[0].DEFAULT_CERTIFICATE_TEMPLATE =
+                  certificate_template[0].DEFAULT_CERTIFICATE_TEMPLATE;
+              }
+
               res.send({
                 message: "Correct credentials",
                 idError: 0,
@@ -107,7 +117,7 @@ router.post("/", async function (req, res, next) {
                 isVerifiedError: 0,
                 isPasswordResetError: 0,
                 SESSION_ID: req.session.id,
-                login_data: customer_data,
+                login_data: user_data,
               });
             }
           }

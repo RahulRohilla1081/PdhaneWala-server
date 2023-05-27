@@ -5,13 +5,14 @@ const axios_function_all_APIs_catch = require("../for_programmers/axios_function
 
 /*   
 API url: - 
-http://localhost:9000/main_api/batch/weekday_batch_data_get?CUSTOMER_ID=PWC0000001&WEEKDAY=Monday
+http://localhost:9000/main_api/teacher/weekday_batch_data_by_teacher_id_get?CUSTOMER_ID=PWC0000001&TEACHER_ID=PWT001&WEEKDAY=Monday
 */
 
 router.get("/", async function (req, res, next) {
   try {
     let WEEKDAY = req.query.WEEKDAY;
     let CUSTOMER_ID = req.query.CUSTOMER_ID;
+    let TEACHER_ID = req.query.TEACHER_ID;
     let db = await dbConnect();
 
     var weekdayRegex = new RegExp(WEEKDAY, "i");
@@ -19,7 +20,7 @@ router.get("/", async function (req, res, next) {
     var weekdayBatches = await db
       .collection("batch_master")
       .aggregate([
-        { $match: { CUSTOMER_ID: CUSTOMER_ID } },
+        { $match: { CUSTOMER_ID: CUSTOMER_ID, TEACHER_ID: TEACHER_ID } },
         { $unwind: "$BATCH_TIMING" },
         { $match: { "BATCH_TIMING.BATCH_DAY": { $regex: weekdayRegex } } },
         { $project: { _id: 0 } },
@@ -40,6 +41,7 @@ router.get("/", async function (req, res, next) {
       ])
       .project({ _id: 0 })
       .toArray();
+    console.log(weekdayStudentData);
     weekdayBatches.map((val) => {
       var FilteredStudent = weekdayStudentData.filter(
         (student) => student.STUDENT_COURSE.BATCH_NO == val.BATCH_NO

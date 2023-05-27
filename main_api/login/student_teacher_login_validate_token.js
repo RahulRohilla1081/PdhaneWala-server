@@ -27,6 +27,7 @@ router.get("/", async function (req, res, next) {
         USER_EMAIL: data_user[0].USER_EMAIL,
         ROLE_ID: data_user[0].ROLE_ID,
         CUSTOMER_ID: data_user[0].CUSTOMER_ID,
+        IS_PASSWORD_RESET: data[0].IS_PASSWORD_RESET,
       };
       res.send({ token_valid: true, DATA: user_data });
       // res.send(data)

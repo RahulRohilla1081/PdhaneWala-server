@@ -24,7 +24,11 @@ router.get("/", async function (req, res, next) {
     // res.send({course:[...data1],batch:[...data2]})
     let data_student = await db
       .collection("user_db")
-      .aggregate([{ $match: { CUSTOMER_ID: CUSTOMER_ID } }])
+      .aggregate([
+        { $match: { CUSTOMER_ID: CUSTOMER_ID } },
+        { $unwind: "$ROLE_ID" },
+        { $match: { ROLE_ID: "STUDENT" } },
+      ])
       .toArray();
     COURSE_DURATION_YY_MM_DD = [];
     data.map((val) => {
@@ -35,15 +39,18 @@ router.get("/", async function (req, res, next) {
       COURSE_DURATION_YY_MM_DD = [years, months, days];
       // delete val.COURSE_DURATION_DAYS;
       val.COURSE_DURATION_YY_MM_DD = COURSE_DURATION_YY_MM_DD;
-      data_student.map((innerval) => {
-        if (
-          innerval.STUDENT_COURSE.some(
-            (item) => item.COURSE_ID == val.COURSE_ID
-          )
-        ) {
-          STUDENT_COUNT += 1;
-        }
-      });
+      if (data_student.length > 0) {
+        data_student.map((innerval) => {
+          if (
+            innerval.STUDENT_COURSE.some(
+              (item) => item.COURSE_ID == val.COURSE_ID
+            )
+          ) {
+            STUDENT_COUNT += 1;
+          }
+        });
+      }
+
       val.STUDENT_COUNT = STUDENT_COUNT;
     });
     res.send(data);

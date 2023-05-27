@@ -35,6 +35,10 @@ router.post("/", async function (req, res, next) {
       user_data[0].IP_ADDRESS = formData.IP_ADDRESS;
       user_data[0].USER_DEVICE = formData.USER_DEVICE;
       user_data[0].LAST_ACTIVITY = formData.LAST_ACTIVITY;
+      // user_data[0].SESSION_ID = req.session.id;
+      // user_data[0].IS_LOGOUT = false;
+
+      // res.send(user_data);
       db.collection("user_login").updateOne(
         { USER_ID: formData.USER_ID, CUSTOMER_ID: formData.CUSTOMER_ID },
         {
@@ -57,13 +61,18 @@ router.post("/", async function (req, res, next) {
       db.collection("sessions").insertOne(insertData);
       res.send({
         Message: "User valid",
-        isUser: true, 
+        isUser: true,
         user_data: {
           ...user_data,
           SESSION_ID: req.session.id,
           IS_LOGOUT: false,
         },
       });
+      // res.send({
+      //   Message: "User valid",
+      //   isUser: true,
+      //   user_data: user_data,
+      // });
     } else {
       res.send({ Message: "User not registered", isUser: false });
     }

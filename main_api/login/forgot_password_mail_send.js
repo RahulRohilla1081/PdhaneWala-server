@@ -5,11 +5,12 @@ const hat = require("hat");
 var nodemailer = require("nodemailer");
 const constants = require("../constants/constants");
 
-const HOST_URL_RESET_PASSWORD = constants.HOST_URL_RESET_PASSWORD;
-const COMPANY_NAME = constants.COMPANY_NAME;
-const DOMAIN_URL = constants.DOMAIN_URL;
 const SUPPORT_EMAIL_ID = constants.SUPPORT_EMAIL_ID;
+const HOST_URL_RESET_PASSWORD = constants.HOST_URL_RESET_PASSWORD;
 const SUPPORT_EMAIL_PASSWORD = constants.SUPPORT_EMAIL_PASSWORD;
+const PDHANE_WALA_IMG = constants.PDHANE_WALA_IMG;
+const RESET_PASSWORD_IMAGE = constants.RESET_PASSWORD_IMAGE;
+const BETACODE_LOGO = constants.BETACODE_LOGO;
 
 /*   
 API url: - 
@@ -55,28 +56,18 @@ router.post("/", async function (req, res, next) {
         subject: "Reset Password",
 
         html:
-          "<body style='background-color: #f3f2f0;'> <table align='center' border='0' cellpadding='0' cellspacing='0' width='550' bgcolor='white' style='box-shadow:0 4px 8px 0 rgba(0,0,0,0.2);transition: 0.3s; width: 550px;' > <tbody> <tr> <td align='center'> <table align='center' border='0' cellpadding='0' cellspacing='0' class='col-550' width='550'> <tbody> </tbody> </table> </td> </tr> <tr style='display: inline-block; text-align: center;'> <td style='height: 150px; padding: 20px; border: none; background-color: white;'> <h3 style='background-color: #7c72dc ;color: white; height: 30px; text-align: center;align-items: center; '>Greetings from Timesheet! </h3> <h4 style='text-align: left; align-items: center;'>Hello " +
+          "<body style='background-color: #f3f2f0;'> <table align='center' border='0' cellpadding='0' cellspacing='0' width='550' bgcolor='white' style='box-shadow:0 4px 8px 0 rgba(0,0,0,0.2);transition: 0.3s; width: 550px;' > <td align='center'> <div style='align-items: flex-start; display: flex;'> <img src=" +
+          PDHANE_WALA_IMG +
+          " width='120'/> </div> <h4 style='text-align: left; align-items: center; margin-left: 15px;'>Hello " +
           user_name +
-          ", <br> </h4> <p style='text-align: left;'> Timesheet provides you access to your Timesheet for projects and tasks assigned by your Project Manager. Please take a moment to reset your password. <br> </p> <p style='text-align: center;'> Click on Reset Password below </p> <p class='data' style='text-align: justify-all; align-items: center; font-size: 15px; padding-bottom: 12px;'> </p> <img src=''/> <br> <a href='" +
+          "</h4> <p style='text-align: center;padding: 10px;'>You have requested to change your password</p> <p style='text-align: center;'> Click on Reset Password below </p> <p class='data' style='text-align: justify-all; align-items: center; font-size: 15px; padding-bottom: 12px;'> </p> <img src=" +
+          RESET_PASSWORD_IMAGE +
+          " width='550'/> <a href=" +
           HOST_URL_RESET_PASSWORD +
           reset_pss_token +
-          "' style='background-color: #7c72dc; /* Green */ border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 30px; font-weight: 700; width: 150px; height: 30px; margin-top: 20px; '> Reset Password </a> <p> or paste the following link into your browser </p> <a href='" +
-          HOST_URL_RESET_PASSWORD +
-          reset_pss_token +
-          "'>" +
-          HOST_URL_RESET_PASSWORD +
-          reset_pss_token +
-          "</a> <p> After changing the password, you can login using the link: </p> <a href='" +
-          DOMAIN_URL +
-          "'>" +
-          DOMAIN_URL +
-          "</a><p>If you have any trouble logging in or using the application, write to us at <a href='" +
-          SUPPORT_EMAIL_ID +
-          "'>" +
-          SUPPORT_EMAIL_ID +
-          "</a> We will revert to you and help you with your queries. </p> <p style='text-align: left;font-weight: 700;'> Note: The link will expire after used once for password reset. </p> </td> </tr> <tr style='border: none; background-color: #7c72dc; height: 40px; color:white; padding-bottom: 20px; text-align: center;'> <td height='100px' align='center'> <img src=''/><br> </td> </tr> <tr> <td style='font-family:'Open Sans', Arial, sans-serif; font-size:11px; line-height:18px; color:#999999;' valign='top' align='center'> <a href='#' target='_blank' style='color:#999999; text-decoration:underline;'>PRIVACY STATEMENT</a> | <a href='#' target='_blank' style='color:#999999; text-decoration:underline;'>TERMS OF SERVICE</a> | <a href='#' target='_blank' style='color:#999999; text-decoration:underline;'>RETURNS</a><br>" +
-          COMPANY_NAME +
-          "<br> </td> </tr> </tbody></table></td> </tr> <tr> <td class='em_hide' style='line-height:1px; min-width:700px; background-color:#ffffff;'> <img alt='' src='images/spacer.gif' style='max-height:1px; min-height:1px; display:block; width:700px; min-width:700px;' width='700' border='0' height='1'> </td> </tr> </tbody> </table> </body>",
+          " style='background-color: #fe1873; /* Green */ border: none; color: white; text-align: center; text-decoration: none; display: inline-block; font-size: 20px; font-weight: 700; width: 150px; padding:10px; margin-top: 20px;border-radius: 10px;'> Reset Password </a> <p style='text-align: left;margin-left: 15px;'>If you have any trouble logging in or using the application, write to us at <a href=''>support@betacode.com</a> <p style='text-align: left;font-weight: 700;margin-left: 15px;'> Note: The link will expire after used once for password reset. </p> <img src=" +
+          BETACODE_LOGO +
+          " width='70'/> <p>© 2023 BetaCode. All Rights Reserved.</p> <div style='margin-bottom: 20px;'> <a href='#' target='_blank' style='color:#000; text-decoration:none;'>Privacy Policy</a> | <a href='#' target='_blank' style='color:#000; text-decoration:none;'>Terms Of Service</a> </div> </td> </table> </body>",
       };
 
       transporter.sendMail(mailOptions, function (error, info) {
@@ -88,6 +79,12 @@ router.post("/", async function (req, res, next) {
 
           if (error.responseCode == 432) {
             sendMail(toMail, user_name, reset_pss_token);
+          } else {
+            res.send({
+              Message: "Mailing error",
+              mailSent: false,
+              emailIdExists: true,
+            });
           }
         } else {
           console.log({
@@ -95,23 +92,35 @@ router.post("/", async function (req, res, next) {
             info: info,
             RESET_PASSWORD_TOKEN: reset_pss_token,
           });
+          if (data[0].ROLE_ID.some((val) => val == "CUSTOMER")) {
+            db.collection("user_login").updateOne(
+              { USER_ID: data[0].USER_ID },
+              { $set: { RESET_PASSWORD_TOKEN: RESET_PASSWORD_TOKEN } }
+            );
+          } else {
+            db.collection("user_login").updateOne(
+              { USER_ID: data[0].USER_ID, CUSTOMER_ID: data[0].CUSTOMER_ID },
+              { $set: { RESET_PASSWORD_TOKEN: RESET_PASSWORD_TOKEN } }
+            );
+          }
         }
       });
     }
+    if (data.length > 0) {
+      sendMail(USER_EMAIL, data[0].USER_FULLNAME, RESET_PASSWORD_TOKEN);
 
-    sendMail(USER_EMAIL, data[0].USER_FULLNAME, RESET_PASSWORD_TOKEN);
-    if (data[0].USER_ID.includes("PWC")) {
-      db.collection("user_login").updateOne(
-        { USER_ID: data[0].USER_ID },
-        { $set: { RESET_PASSWORD_TOKEN: RESET_PASSWORD_TOKEN } }
-      );
+      res.send({
+        Message: "Mail sent and reset password token updated",
+        mailSent: true,
+        emailIdExists: true,
+      });
     } else {
-      db.collection("user_login").updateOne(
-        { USER_ID: data[0].USER_ID, CUSTOMER_ID: data[0].CUSTOMER_ID },
-        { $set: { RESET_PASSWORD_TOKEN: RESET_PASSWORD_TOKEN } }
-      );
+      res.send({
+        Message: "emailID does not exist",
+        mailSent: false,
+        emailIdExists: false,
+      });
     }
-    res.send("Mail sent and reset password token updated");
   } catch (err) {
     console.log(err);
     res.send({ message: "Error in " + __filename });

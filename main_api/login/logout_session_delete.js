@@ -11,7 +11,8 @@ payload:-
 {
    "SESSION_ID" :"qfMHcAE0Z5Ry4BBoBzN_9R8yylYSpiSw",
    "SESSION_TYPE" :"SINGLE",
-   "USER_ID" :"S0004" 
+   "USER_ID" :"S0004",
+   "CUSTOMER_ID":""
 }
 */
 
@@ -27,8 +28,23 @@ router.post("/", async (req, res) => {
       );
       res.send("Single session logged out");
     } else if (formData.SESSION_TYPE.toUpperCase() == "MULTIPLE") {
+      if (formData.CUSTOMER_ID == "") {
+        db.collection("sessions").updateMany(
+          {
+            USER_ID: formData.USER_ID,
+            SESSION_ID: { $not: { $eq: formData.SESSION_ID } },
+          },
+          { $set: { IS_LOGOUT: true } }
+        );
+        res.send("Multiple session logged out");
+      }
+    } else {
       db.collection("sessions").updateMany(
-        { USER_ID: formData.USER_ID },
+        {
+          USER_ID: formData.USER_ID,
+          CUSTOMER_ID: formData.CUSTOMER_ID,
+          SESSION_ID: { $not: { $eq: formData.SESSION_ID } },
+        },
         { $set: { IS_LOGOUT: true } }
       );
       res.send("Multiple session logged out");

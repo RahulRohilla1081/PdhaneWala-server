@@ -34,7 +34,7 @@ router.get("/", async function (req, res, next) {
         var filtered_course = course_data.filter(
           (course) => course.COURSE_ID == innerval.COURSE_ID
         );
-        console.log("filtered_course", filtered_course);
+        // console.log("filtered_course", filtered_course);
         innerval.COURSE_NAME = filtered_course[0].COURSE_NAME;
         var filtered_batch = batch_data.filter(
           (batch) => batch.BATCH_NO == innerval.BATCH_NO

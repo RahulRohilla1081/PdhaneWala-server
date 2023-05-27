@@ -5,15 +5,12 @@ const axios_function_all_APIs_catch = require("../for_programmers/axios_function
 
 /*   
 API url: - 
-http://localhost:9000/main_api/attendance/attendance_create
+http://localhost:9000/main_api/notifications/notifications_deactivate
 payload:-
 {
     "CUSTOMER_ID":"PWC0000001",
-    "USER_ID":"PWS00002",
-    "COURSE_ID":"C001",
-    "BATCH_NO":"B001",
-    "DATE":"2023-03-23",
-    "ATTENDANCE":"P" 
+    "NOTIFICATION_ID":"N00000001"
+    "IS_ACTIVE":false    
 }
 */
 
@@ -21,20 +18,21 @@ router.post("/", async function (req, res, next) {
   try {
     let formData = await req.body;
     let db = await dbConnect();
-    var insertData = {
-      CUSTOMER_ID: formData.CUSTOMER_ID,
-      USER_ID: formData.USER_ID,
-      DATE: formData.DATE,
-      COURSE_ID: formData.COURSE_ID,
-      BATCH_NO: formData.BATCH_NO,
-      ATTENDANCE: formData.ATTENDANCE,
-    };
-    db.collection("attendance").insertOne(insertData);
-    res.send("Attendance created");
+
+    db.collection("notifications").updateOne(
+      {
+        CUSTOMER_ID: formData.CUSTOMER_ID,
+        NOTIFICATION_ID: formData.NOTIFICATION_ID,
+      },
+      { $set: { IS_ACTIVE: formData.IS_ACTIVE } }
+    );
+    res.send({
+      server_status: res.statusCode,
+      message: "Notification deactivated",
+    });
   } catch (err) {
     console.log(err);
     axios_function_all_APIs_catch(__filename, res.statusCode, req.body);
-
     res.send({ message: "Error in " + __filename });
   }
 });

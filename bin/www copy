@@ -9,10 +9,7 @@ var debug = require("debug")("server:server");
 var http = require("http");
 const socketIO = require("socket.io");
 const dbConnect = require("../db");
-const cors = require("cors");
-const DOMAIN_URL = require("../main_api/constants/constants").DOMAIN_URL;
 
-app.use(cors());
 // const auto_draft_cleanup_API_call = require("../auto_draft_cleanup_projects/auto_draft_cleanup_API_call");
 // const weekly_report_mail_APIs_call = require("../reports_scheduler/weekly_report_mail_APIs_call");
 // const reminder_mail_API_call = require("../reminder_mail/reminder_mail_API_call");
@@ -33,27 +30,37 @@ var server = http.createServer(app);
 /**
  * Create websocket server.
  */
-const io = socketIO(server, {
-  cors: {
-    origin: DOMAIN_URL,
-  },
+var io = socketIO(server);
+// make connection with user from server side
+io.on("connection", (socket) => {
+  console.log("New user connected");
+  // listen for message from user
+  var data;
+  socket.on("createMessage", async (newMessage) => {
+    console.log("newMessage", newMessage);
+    let db = await dbConnect();
+    data = await db
+      .collection("user_login")
+      .find({ USER_ID: newMessage.USER_ID })
+      .toArray();
+    console.log(data);
+    // socket.emit("newMessage", {
+    //   IS_VERIFIED: data,
+    //   // IS_VERIFIED: true,
+    // });
+  });
+
+  //emit message from server to user
+  // socket.emit("newMessage", {
+  //   // IS_VERIFIED: data[0].IS_VERIFIED,
+  //   IS_VERIFIED: false,
+  // });
+
+  // when server disconnects from user
+  socket.on("disconnect", () => {
+    console.log("disconnected from user");
+  });
 });
-var customerEmailVerified = require("../main_api/login/customer_email_verified_update.js");
-customerEmailVerified.start(io);
-// // make connection with user from server side
-// io.on("connection", (socket) => {
-//   console.log("Connection success", socket.id);
-//   // emit message from server to user
-
-//   socket.emit("newMessage", {
-//     // IS_VERIFIED: data[0].IS_VERIFIED,
-
-//     IS_VERIFIED: false,
-//   });
-//   socket.on("disconnect", () => {
-//     console.log("Connection disconnected", socket.id);
-//   });
-// });
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -123,3 +130,5 @@ function onListening() {
   var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
   debug("Listening on " + bind);
 }
+
+module.exports = io;

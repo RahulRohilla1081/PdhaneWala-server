@@ -1,17 +1,22 @@
 const express = require("express");
 var router = express.Router();
-const bcrypt = require("bcrypt");
 var nodemailer = require("nodemailer");
 const dbConnect = require("../../db");
 const hat = require("hat");
 const constants = require("../constants/constants");
+const PW_CERTIFICATE_TEMPLATES =
+  require("../constants/pw_certificate_templates").PW_CERTIFICATE_TEMPLATES;
 const axios_function_all_APIs_catch = require("../for_programmers/axios_function_all_APIs_catch");
 
 const HOST_URL_VERIFY_USER = constants.HOST_URL_VERIFY_USER;
 const COMPANY_NAME = constants.COMPANY_NAME;
 const DOMAIN_URL = constants.DOMAIN_URL;
 const SUPPORT_EMAIL_ID = constants.SUPPORT_EMAIL_ID;
+const SUPPORT_EMAIL_PASSWORD = constants.SUPPORT_EMAIL_PASSWORD;
 const RESET_PASSWORD_IMAGE = constants.RESET_PASSWORD_IMAGE;
+const PDHANE_WALA_IMG = constants.PDHANE_WALA_IMG;
+const CONFIRM_ACCOUNT_IMG = constants.CONFIRM_ACCOUNT_IMG;
+const BETACODE_LOGO = constants.BETACODE_LOGO;
 
 /* 
 API url: -     
@@ -32,7 +37,6 @@ router.post("/", async function (req, res, next) {
     let db = await dbConnect();
     let VERIFY_USER_TOKEN = hat();
     var USER_ID = "";
-    // const HashedPassword = bcrypt.hashSync(formData.PASSWORD, 10);
 
     //----------------Customer ID creation------------------
 
@@ -68,7 +72,7 @@ router.post("/", async function (req, res, next) {
       USER_FULLNAME: formData.USER_FULLNAME,
       GENDER: formData.GENDER,
       ROLE_ID: ["CUSTOMER"],
-      DEFAULT_CERTIFICATE_TEMPLATE: "T01",
+      DEFAULT_CERTIFICATE_TEMPLATE: PW_CERTIFICATE_TEMPLATES[0],
       IS_REMOVED: false,
       IS_ACTIVE: true,
     };
@@ -83,22 +87,26 @@ router.post("/", async function (req, res, next) {
       IS_ACTIVE: true,
     };
 
-    //----------------Check if user already exists
-
-    if (data.some((val) => val.USER_EMAIL == formData.USER_EMAIL)) {
-      let user = data.find(
-        (element) => element.USER_EMAIL == formData.USER_EMAIL
-      );
+    //----------------Check if user already exists-----------
+    let data_user = await db
+      .collection("user_db")
+      .find({ USER_EMAIL: formData.USER_EMAIL })
+      .toArray();
+    if (data_user.length > 0) {
+      // if (data.some((val) => val.USER_EMAIL == formData.USER_EMAIL)) {
+      // let user = data.find(
+      //   (element) => element.USER_EMAIL == formData.USER_EMAIL
+      // );
       res.send({
         message: "Email ID already registered",
         already_registered: true,
-        ROLE_ID: user.ROLE_ID,
+        ROLE_ID: data_user[0].ROLE_ID,
       });
     } else {
       //-----------send verification mail if the user has not signed-up through verified Gmail account---------
 
-      let fromMail = "rahul.rohilla1081@gmail.com";
-      let password = "vzhkliuwvyfsyast";
+      let fromMail = SUPPORT_EMAIL_ID;
+      let password = SUPPORT_EMAIL_PASSWORD;
       // let password = "abcd";
 
       function sendMail(toMail, user_name, verify_user_token) {
@@ -123,28 +131,14 @@ router.post("/", async function (req, res, next) {
           subject: "Verify Email",
 
           html:
-            "<body style='background-color: #f3f2f0;'> <table align='center' border='0' cellpadding='0' cellspacing='0' width='550' bgcolor='white' style='box-shadow:0 4px 8px 0 rgba(0,0,0,0.2);transition: 0.3s; width: 550px;' > <tbody> <tr> <td align='center'> <table align='center' border='0' cellpadding='0' cellspacing='0' class='col-550' width='550'> <tbody> </tbody> </table> </td> </tr> <tr style='display: inline-block; text-align: center;'> <td style='height: 150px; padding: 20px; border: none; background-color: white;'> <h3 style='background-color: #7c72dc ;color: white; height: 30px; text-align: center;align-items: center; '>Greetings from Timesheet! </h3> <h4 style='text-align: left; align-items: center;'>Hello " +
+            "<body style='background-color: #f3f2f0'> <table align='center' border='0' cellpadding='0' cellspacing='0' width='550' bgcolor='white' style=' box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2); transition: 0.3s; width: 550px; ' > <td align='center'> <h4 style='text-align: left; align-items: center; margin-left: 15px'> Hello " +
             user_name +
-            ", <br> </h4> <p style='text-align: left;'> Timesheet provides you access to your Timesheet for projects and tasks assigned by your Project Manager. Please take a moment to reset your password. <br> </p> <p style='text-align: center;'> Click on Reset Password below </p> <p class='data' style='text-align: justify-all; align-items: center; font-size: 15px; padding-bottom: 12px;'> </p> <img src='' width='550px' height='400px'/> <br> <a href='" +
+            " </h4> <p style='text-align: center; padding: 10px'> Thank you for creating your account with PdhaneWala, </p> <p style='text-align: center'>Click on Confirm Account below</p> <p class='data' style=' text-align: justify-all; align-items: center; font-size: 15px; padding-bottom: 12px; ' ></p>  <a href=" +
             HOST_URL_VERIFY_USER +
             verify_user_token +
-            "' style='background-color: #7c72dc; /* Green */ border: none; color: white; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 30px; font-weight: 700; width: 150px; height: 30px; margin-top: 20px; '> Reset Password </a> <p> or paste the following link into your browser </p> <a href='" +
-            HOST_URL_VERIFY_USER +
-            verify_user_token +
-            "'>" +
-            HOST_URL_VERIFY_USER +
-            verify_user_token +
-            "</a> <p> After changing the password, you can login using the link: </p> <a href='" +
-            DOMAIN_URL +
-            "'>" +
-            DOMAIN_URL +
-            "</a><p>If you have any trouble logging in or using the application, write to us at <a href='" +
-            SUPPORT_EMAIL_ID +
-            "'>" +
-            SUPPORT_EMAIL_ID +
-            "</a> We will revert to you and help you with your queries. </p> <p style='text-align: left;font-weight: 700;'> Note: The link will expire after used once for password reset. </p> </td> </tr> <tr style='border: none; background-color: #7c72dc; height: 40px; color:white; padding-bottom: 20px; text-align: center;'> <td height='100px' align='center'> <img src='http://localhost:9000/student_ID_S0007.png' width='550px' height='400px'/><br> </td> </tr> <tr> <td style='font-family:'Open Sans', Arial, sans-serif; font-size:11px; line-height:18px; color:#999999;' valign='top' align='center'> <a href='#' target='_blank' style='color:#999999; text-decoration:underline;'>PRIVACY STATEMENT</a> | <a href='#' target='_blank' style='color:#999999; text-decoration:underline;'>TERMS OF SERVICE</a> | <a href='#' target='_blank' style='color:#999999; text-decoration:underline;'>RETURNS</a><br>" +
-            COMPANY_NAME +
-            "<br> </td> </tr> </tbody></table></td> </tr> <tr> <td class='em_hide' style='line-height:1px; min-width:700px; background-color:#ffffff;'> <img alt='' src='images/spacer.gif' style='max-height:1px; min-height:1px; display:block; width:700px; min-width:700px;' width='700' border='0' height='1'> </td> </tr> </tbody> </table> </body>",
+            " style=' background-color: #9f4e9a; /* Green */ border: none; color: white; text-align: center; text-decoration: none; display: inline-block; font-size: 20px; font-weight: 700; width: 150px; padding: 10px; margin-top: 20px; border-radius: 10px; ' >Confirm Account</a > <p style='text-align: left; margin-left: 15px'> If you have any trouble logging in or using the application, write to us at <a href='' >support@betacode.com</a > </p> <p style='text-align: left; font-weight: 700; margin-left: 15px'> Note: The link will expire after used once for password reset. </p> <img src=" +
+            BETACODE_LOGO +
+            " style='width: 70px;' /> <p>© 2023 BetaCode. All Rights Reserved.</p> <div style='margin-bottom: 20px'> <a href='#' target='_blank' style='color: #000; text-decoration: none' >Privacy Policy</a > | <a href='#' target='_blank' style='color: #000; text-decoration: none' >Terms Of Service</a > </div> </td> </table></body>",
         };
 
         transporter.sendMail(mailOptions, function (error, info) {
@@ -161,6 +155,7 @@ router.post("/", async function (req, res, next) {
               message: "Customer created",
               mailSent: 1,
               already_registered: false,
+              USER_ID: insertData_1.USER_ID,
             });
           }
         });

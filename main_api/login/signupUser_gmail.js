@@ -2,6 +2,8 @@ const express = require("express");
 var router = express.Router();
 const dbConnect = require("../../db");
 const hat = require("hat");
+const PW_CERTIFICATE_TEMPLATES =
+  require("../constants/pw_certificate_templates").PW_CERTIFICATE_TEMPLATES;
 const axios_function_all_APIs_catch = require("../for_programmers/axios_function_all_APIs_catch");
 
 /* 
@@ -67,7 +69,7 @@ router.post("/", async function (req, res, next) {
       USER_FULLNAME: formData.USER_FULLNAME,
       GENDER: formData.GENDER,
       ROLE_ID: ["CUSTOMER"],
-      DEFAULT_CERTIFICATE_TEMPLATE: "T01",
+      DEFAULT_CERTIFICATE_TEMPLATE: PW_CERTIFICATE_TEMPLATES[0],
       IS_REMOVED: false,
       IS_ACTIVE: true,
     };
@@ -144,6 +146,7 @@ router.post("/", async function (req, res, next) {
         Status: "New customer created",
         already_registered: false,
         session_data: session_data,
+        DEFAULT_CERTIFICATE_TEMPLATE: PW_CERTIFICATE_TEMPLATES[0],
       });
     }
   } catch (err) {

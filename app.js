@@ -7,7 +7,6 @@ const session = require("express-session");
 const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
 
-
 app.use(cors());
 app.use(express.json());
 app.use(
@@ -26,6 +25,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");
 
+var testingTestingRouter = require("./main_api/testing/testing");
+
 var studentGetRouter = require("./main_api/student/student_get");
 var studentUpdateRouter = require("./main_api/student/student_update");
 var studentGetByCustomerIdRouter = require("./main_api/student/student_get_by_customer_id");
@@ -41,6 +42,7 @@ var studentCourseCompletedUpdateRouter = require("./main_api/student/student_cou
 var teacherCreateRouter = require("./main_api/teacher/teacher_create");
 var teacherUpdateRouter = require("./main_api/teacher/teacher_update");
 var teacherGetByCustomerIdRouter = require("./main_api/teacher/teacher_get_by_customer_id");
+var weekdayBatchDataByTeacherIdGetRouter = require("./main_api/teacher/weekday_batch_data_by_teacher_id_get");
 
 var courseGetByCustomerIDRouter = require("./main_api/course/course_get_by_customerID");
 var courseCreateRouter = require("./main_api/course/course_create");
@@ -48,7 +50,9 @@ var courseUpdateRouter = require("./main_api/course/course_update");
 
 // var customerCreateRouter = require("./main_api/customer/customer_create");
 var customerGetRouter = require("./main_api/customer/customer_get");
+var customerInstituteDetailsSaveRouter = require("./main_api/customer/customer_institute_details_save");
 var customerInstituteInfoUpdateRouter = require("./main_api/customer/customer_institute_info_update");
+var customerDefaultCertificateUpdateRouter = require("./main_api/certificate_template/customer_default_certificate_update");
 // var loginCustomerIdGetRouter = require("./main_api/customer/login_customer_id_get");
 
 var batchGetByCustomerIDRouter = require("./main_api/batch/batch_get_by_customerID");
@@ -59,7 +63,8 @@ var batchDataByBatchNoGetRouter = require("./main_api/batch/batch_data_by_batch_
 
 var signupUserFormRouter = require("./main_api/login/signupUser_form");
 var signupUserGmailRouter = require("./main_api/login/signupUser_gmail");
-var customerEmailVerifiedUpdateRouter = require("./main_api/login/customer_email_verified_update");
+var customerEmailVerifiedUpdateRouter =
+  require("./main_api/login/customer_email_verified_update").router;
 var sessionGetRouter = require("./main_api/login/session_get");
 var loginVerifyIdPasswordRouter = require("./main_api/login/login_validate_session_create");
 var studentTeacherLoginValidateTokenRouter = require("./main_api/login/student_teacher_login_validate_token");
@@ -69,8 +74,13 @@ var profilePasswordUpdateRouter = require("./main_api/login/profile_password_upd
 var forgotPasswordMailSendRouter = require("./main_api/login/forgot_password_mail_send");
 var activeSessionsGetByUserIDRouter = require("./main_api/login/active_sessions_get_by_userID");
 
-var attendanceCreateRouter = require("./main_api/attendance/attendance_create");
+var attendanceCreateUpdateRouter = require("./main_api/attendance/attendance_create_update");
 var attendanceByStudentIdGetRouter = require("./main_api/attendance/attendance_by_student_id_get");
+var attendanceByCustomerFilteredGetRouter = require("./main_api/attendance/attendance_by_customer_filtered_get");
+var attendanceExportMailRouter = require("./main_api/attendance/attendance_export_mail");
+var attendanceFilterDataGetRouter = require("./main_api/attendance/attendance_filter/attendance_filter_data_get");
+var attendanceApproveRejectRouter = require("./main_api/attendance/attendance_approval/attendance_approve_reject");
+
 var rozerpay = require("./main_api/rozerpay/rozerpay");
 var rozerpay_success = require("./main_api/rozerpay/rozerpay_success");
 var testingRouter = require("./main_api/testing.js");
@@ -78,6 +88,15 @@ var testingRouter = require("./main_api/testing.js");
 var certificateTemplateCreateRouter = require("./main_api/certificate_template/certificate_template_create");
 var certificateTemplateUpdateRouter = require("./main_api/certificate_template/certificate_template_update");
 var certificateTemplatebyCustomerIDGetRouter = require("./main_api/certificate_template/certificate_template_by_customerID_get");
+
+var notificationsCreateRouter = require("./main_api/notifications/notifications_create");
+var notificationsUpdateRouter = require("./main_api/notifications/notifications_update");
+var notificationsGetRouter = require("./main_api/notifications/notifications_get");
+var seenNotificationByUserIdGetRouter = require("./main_api/notifications/seen_notification_by_user_id_get");
+var notificationsSeenUpdateRouter = require("./main_api/notifications/notifications_seen_update");
+var notificationsDeactivateRouter = require("./main_api/notifications/notifications_deactivate");
+
+app.use("/main_api/testing/testing", testingTestingRouter);
 
 http: app.use("/main_api/student/student_get", studentGetRouter);
 app.use("/main_api/student/student_update", studentUpdateRouter);
@@ -109,6 +128,10 @@ app.use(
   "/main_api/teacher/teacher_get_by_customer_id",
   teacherGetByCustomerIdRouter
 );
+app.use(
+  "/main_api/teacher/weekday_batch_data_by_teacher_id_get",
+  weekdayBatchDataByTeacherIdGetRouter
+);
 
 app.use(
   "/main_api/course/course_get_by_customerID",
@@ -118,7 +141,15 @@ app.use("/main_api/course/course_create", courseCreateRouter);
 app.use("/main_api/course/course_update", courseUpdateRouter);
 
 // app.use("/main_api/customer/customer_create", customerCreateRouter);
+app.use(
+  "/main_api/customer/customer_institute_details_save",
+  customerInstituteDetailsSaveRouter
+);
 app.use("/main_api/customer/customer_get", customerGetRouter);
+app.use(
+  "/main_api/certificate_template/customer_default_certificate_update",
+  customerDefaultCertificateUpdateRouter
+);
 app.use(
   "/main_api/customer/customer_institute_info_update",
   customerInstituteInfoUpdateRouter
@@ -178,11 +209,53 @@ app.use(
   certificateTemplatebyCustomerIDGetRouter
 );
 
-app.use("/main_api/attendance/attendance_create", attendanceCreateRouter);
+app.use(
+  "/main_api/attendance/attendance_create_update",
+  attendanceCreateUpdateRouter
+);
 app.use(
   "/main_api/attendance/attendance_by_student_id_get",
   attendanceByStudentIdGetRouter
 );
+app.use(
+  "/main_api/attendance/attendance_by_customer_filtered_get",
+  attendanceByCustomerFilteredGetRouter
+);
+app.use(
+  "/main_api/attendance/attendance_export_mail",
+  attendanceExportMailRouter
+);
+app.use(
+  "/main_api/attendance/attendance_filter/attendance_filter_data_get",
+  attendanceFilterDataGetRouter
+);
+app.use(
+  "/main_api/attendance/attendance_approval/attendance_approve_reject",
+  attendanceApproveRejectRouter
+);
+
+app.use(
+  "/main_api/notifications/notifications_create",
+  notificationsCreateRouter
+);
+app.use(
+  "/main_api/notifications/notifications_update",
+  notificationsUpdateRouter
+);
+app.use(
+  "/main_api/notifications/notifications_seen_update",
+  notificationsSeenUpdateRouter
+);
+app.use("/main_api/notifications/notifications_get", notificationsGetRouter);
+app.use(
+  "/main_api/notifications/seen_notification_by_user_id_get",
+  seenNotificationByUserIdGetRouter
+);
+app.use(
+  "/main_api/notifications/notifications_deactivate",
+  notificationsDeactivateRouter
+);
+
 app.use("/payment", rozerpay);
 app.use("/payment/success", rozerpay_success);
 

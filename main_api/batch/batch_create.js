@@ -12,7 +12,9 @@ payload:-
     "BATCH_NAME":"MOON",
     "BATCH_LIMIT":"10",
     "BATCH_TYPE":"Offline",
-    "COURSE":[C001,C002]
+    "BATCH_LIMIT":"1",
+    "COURSE":[C001,C002],
+    "TEACHER_ID":"PWT001",
    "BATCH_TIMING":[{"BATCH_DAY":"MONDAY","BATCH_TIME":"7 PM"},{"BATCH_DAY":"WEDNESDAY","BATCH_TIME":"7 PM"},{"BATCH_DAY":"FRIDAY","BATCH_TIME":"7 PM"}]   
 }
 */
@@ -27,6 +29,7 @@ router.post("/", async function (req, res, next) {
       .find({ CUSTOMER_ID: formData.CUSTOMER_ID })
       .toArray();
     // let data = await db.collection("batch_master").find({}).sort({"BATCH_NO" : -1}).limit(1).toArray()
+    
 
     if (data.length > 0) {
       var sorted = data.sort((a, b) => b.BATCH_NO.localeCompare(a.BATCH_NO));
@@ -48,8 +51,10 @@ router.post("/", async function (req, res, next) {
       BATCH_NO: BATCH_NO,
       BATCH_NAME: formData.BATCH_NAME,
       BATCH_TYPE: formData.BATCH_TYPE,
+      BATCH_LIMIT: formData.BATCH_LIMIT,
       BATCH_TIMING: formData.BATCH_TIMING,
       CUSTOMER_ID: formData.CUSTOMER_ID,
+      TEACHER_ID: formData.TEACHER_ID,
       COURSE: formData.COURSE,
       IS_ACTIVE: true,
       IS_REMOVED: false,

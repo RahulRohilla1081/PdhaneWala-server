@@ -17,7 +17,6 @@ payload:-
 
 router.post("/", async function (req, res, next) {
   try {
-    // let VERIFY_USER_TOKEN = req.body.VERIFY_USER_TOKEN;
     let formData = req.body;
     let db = await dbConnect();
 
@@ -40,6 +39,7 @@ router.post("/", async function (req, res, next) {
         { VERIFY_USER_TOKEN: formData.VERIFY_USER_TOKEN },
         { $set: { IS_VERIFIED: true } }
       );
+
       var insertData = {
         USER_ID: data[0].USER_ID,
         SESSION_ID: req.session.id,
@@ -61,4 +61,102 @@ router.post("/", async function (req, res, next) {
   }
 });
 
-module.exports = router;
+// ------------working example of socket----------
+// const DataLaoBro = async () => {
+//   let db = await dbConnect();
+
+//   let data = await db.collection("user_login").find().toArray();
+
+//   // console.log("DATA A RHA HAI", data);
+//   return data;
+// };
+
+// module.exports = {
+//   router: router,
+//   start: function (io) {
+//     io.on("connection", async (socket) => {
+//       console.log("Connection success", socket.id);
+//       // listen for message from user
+
+//       socket.on("createMessage", (newMessage) => {
+//         console.log("newMessage", newMessage);
+//       });
+//       // emit message from server to user
+
+//       socket.emit("newMessage", {
+//         // IS_VERIFIED: data[0].IS_VERIFIED,
+
+//         IS_VERIFIED: await DataLaoBro(),
+//       });
+//       socket.on("disconnect", () => {
+//         console.log("Connection disconnected", socket.id);
+//       });
+//     });
+//   },
+// };
+
+const DataLaoBro = async (user_id) => {
+  console.log("Datalao", user_id);
+  let db = await dbConnect();
+
+  let data = await db
+    .collection("user_login")
+    .find({ USER_ID: user_id })
+    .toArray();
+
+  // console.log("DATA A RHA HAI", data);
+  return data;
+};
+//------------------socket working example
+
+// module.exports = {
+//   router: router,
+//   start: function (io) {
+//     io.on("connection", (socket) => {
+//       console.log("Connection success", socket.id);
+//       // listen for message from user
+
+//       socket.on("createMessage", async (newMessage) => {
+//         console.log("newMessage", newMessage);
+
+//         // emit message from server to user
+
+//         socket.emit("newMessage", {
+//           USER_DATA: await DataLaoBro(newMessage.USER_ID),
+//         });
+//       });
+
+//       socket.on("disconnect", () => {
+//         console.log("Connection disconnected", socket.id);
+//       });
+//     });
+//   },
+// };
+
+//-----------------------------
+
+module.exports = {
+  router: router,
+
+  start: function (io) {
+    io.sockets.on("connection", (socket) => {
+      console.log("Connection success", socket.id);
+      // listen for message from user
+
+      socket.on("join", async (newMessage) => {
+        console.log("newMessage", newMessage);
+
+        // emit message from server to user
+        socket.join(newMessage.USER_ID);
+
+        io.sockets.in(data[0].USER_ID).emit("newMessage", {
+          USER_DATA: await DataLaoBro(newMessage.USER_ID),
+        });
+      });
+
+      // socket.on("disconnect", () => {
+      //   console.log("Connection disconnected", socket.id);
+      // });
+    });
+  },
+};
