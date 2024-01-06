@@ -24,7 +24,7 @@ router.post("/", async function (req, res, next) {
     console.log(req.session);
     let db = await dbConnect();
     var customerFlag;
-    console.log("PASSWORD",formData.PASSWORD);
+    console.log("PASSWORD", formData.PASSWORD);
 
     var data = await db
       .collection("user_db")
@@ -43,6 +43,8 @@ router.post("/", async function (req, res, next) {
           .collection("user_login")
           .find({ USER_ID: data[0].USER_ID, IS_VERIFIED: true })
           .toArray();
+        console.log("data_1", data_1);
+
         var certificate_template = await db
           .collection("user_db")
           .find({ USER_ID: data[0].USER_ID })
@@ -80,7 +82,6 @@ router.post("/", async function (req, res, next) {
             IS_LOGOUT: false,
           };
         }
-
         bcrypt.compare(
           formData.PASSWORD,
           data_1[0].PASSWORD,

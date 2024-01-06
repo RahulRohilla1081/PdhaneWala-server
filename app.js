@@ -35,6 +35,7 @@ var studentByBatchGetRouter = require("./main_api/student/student_by_batch_get")
 var studentDataByStudentIdGetRouter = require("./main_api/student/student_data_by_studentId_get");
 var studentFeeUpdateGetRouter = require("./main_api/student/student_fee_update");
 var studentCourseCompletedUpdateRouter = require("./main_api/student/student_course_completed_update");
+var tambulaGeneratorRouter = require("./main_api/tambula_generator");
 // var studentEmailSendRouter = require("./main_api/student/student_email_send");
 // var singleImageUploadRouter = require("./main_api/student/single_image_upload");
 // // var studentIDgetRouter = require("./main_api/student/student_ID_get");
@@ -81,9 +82,12 @@ var attendanceExportMailRouter = require("./main_api/attendance/attendance_expor
 var attendanceFilterDataGetRouter = require("./main_api/attendance/attendance_filter/attendance_filter_data_get");
 var attendanceApproveRejectRouter = require("./main_api/attendance/attendance_approval/attendance_approve_reject");
 
+var userProfileUpdateRouter = require("./main_api/user/user_profile_update");
+
 var rozerpay = require("./main_api/rozerpay/rozerpay");
 var rozerpay_success = require("./main_api/rozerpay/rozerpay_success");
 var testingRouter = require("./main_api/testing.js");
+var testingDataRouter = require("./main_api/testing/texting_data.js");
 
 var certificateTemplateCreateRouter = require("./main_api/certificate_template/certificate_template_create");
 var certificateTemplateUpdateRouter = require("./main_api/certificate_template/certificate_template_update");
@@ -97,6 +101,8 @@ var notificationsSeenUpdateRouter = require("./main_api/notifications/notificati
 var notificationsDeactivateRouter = require("./main_api/notifications/notifications_deactivate");
 
 app.use("/main_api/testing/testing", testingTestingRouter);
+app.use("/main_api/testing/testing_data", testingDataRouter);
+app.use("/main_api/tambula_generator", tambulaGeneratorRouter);
 
 http: app.use("/main_api/student/student_get", studentGetRouter);
 app.use("/main_api/student/student_update", studentUpdateRouter);
@@ -255,6 +261,8 @@ app.use(
   "/main_api/notifications/notifications_deactivate",
   notificationsDeactivateRouter
 );
+
+app.use("/main_api/user/user_profile_update", userProfileUpdateRouter);
 
 app.use("/payment", rozerpay);
 app.use("/payment/success", rozerpay_success);

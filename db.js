@@ -1,10 +1,10 @@
 const { MongoClient } = require("mongodb");
 const mongoose = require("mongoose");
 
-const url =
-  "mongodb+srv://RahulRohilla1081:Rahul1234@cluster0.xi8tcwh.mongodb.net/?retryWrites=true&w=majority";
+// const url =
+//   "mongodb+srv://RahulRohilla1081:Rahul1234@cluster0.xi8tcwh.mongodb.net/?retryWrites=true&w=majority";
 
-// const url = "mongodb://localhost:27017";
+const url = "mongodb://localhost:27017";
 const DatabaseName = "student_portal";
 const client = new MongoClient(url);
 async function DbConnect() {

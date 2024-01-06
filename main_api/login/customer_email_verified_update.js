@@ -95,8 +95,8 @@ router.post("/", async function (req, res, next) {
 //   },
 // };
 
-const DataLaoBro = async (user_id) => {
-  console.log("Datalao", user_id);
+const GetUserVerificationData = async (user_id) => {
+  console.log("Get User data ", user_id);
   let db = await dbConnect();
 
   let data = await db
@@ -104,36 +104,8 @@ const DataLaoBro = async (user_id) => {
     .find({ USER_ID: user_id })
     .toArray();
 
-  // console.log("DATA A RHA HAI", data);
   return data;
 };
-//------------------socket working example
-
-// module.exports = {
-//   router: router,
-//   start: function (io) {
-//     io.on("connection", (socket) => {
-//       console.log("Connection success", socket.id);
-//       // listen for message from user
-
-//       socket.on("createMessage", async (newMessage) => {
-//         console.log("newMessage", newMessage);
-
-//         // emit message from server to user
-
-//         socket.emit("newMessage", {
-//           USER_DATA: await DataLaoBro(newMessage.USER_ID),
-//         });
-//       });
-
-//       socket.on("disconnect", () => {
-//         console.log("Connection disconnected", socket.id);
-//       });
-//     });
-//   },
-// };
-
-//-----------------------------
 
 module.exports = {
   router: router,
@@ -149,8 +121,8 @@ module.exports = {
         // emit message from server to user
         socket.join(newMessage.USER_ID);
 
-        io.sockets.in(data[0].USER_ID).emit("newMessage", {
-          USER_DATA: await DataLaoBro(newMessage.USER_ID),
+        io.sockets.in(newMessage.USER_ID).emit("newMessage", {
+          USER_DATA: await GetUserVerificationData(newMessage.USER_ID),
         });
       });
 
