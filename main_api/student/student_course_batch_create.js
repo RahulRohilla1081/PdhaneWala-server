@@ -346,9 +346,9 @@ router.post("/", async function (req, res, next) {
         sendMail(
           formData.USER_EMAIL,
           formData.USER_FULLNAME,
-          RESET_PASSWORD_TOKEN
+          RESET_PASSWORD_TOKEN,
+          customer_data[0].INSTITUTE_NAME
         );
-
         res.send({
           Status: "Insert data success",
           student_exists: false,

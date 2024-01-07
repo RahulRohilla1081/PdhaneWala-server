@@ -88,6 +88,8 @@ var rozerpay = require("./main_api/rozerpay/rozerpay");
 var rozerpay_success = require("./main_api/rozerpay/rozerpay_success");
 var testingRouter = require("./main_api/testing.js");
 var testingDataRouter = require("./main_api/testing/texting_data.js");
+var dbBackupRouter = require("./main_api/testing/db_backup.js");
+
 
 var certificateTemplateCreateRouter = require("./main_api/certificate_template/certificate_template_create");
 var certificateTemplateUpdateRouter = require("./main_api/certificate_template/certificate_template_update");
@@ -183,6 +185,7 @@ app.use(
   "/main_api/login/login_validate_session_create",
   loginVerifyIdPasswordRouter
 );
+
 app.use(
   "/main_api/login/student_teacher_login_validate_token",
   studentTeacherLoginValidateTokenRouter
@@ -239,6 +242,8 @@ app.use(
   "/main_api/attendance/attendance_approval/attendance_approve_reject",
   attendanceApproveRejectRouter
 );
+app.use("/main_api/testing/db_backup", dbBackupRouter);
+
 
 app.use(
   "/main_api/notifications/notifications_create",
