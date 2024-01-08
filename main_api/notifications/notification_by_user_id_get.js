@@ -84,16 +84,16 @@ module.exports = {
       console.log("Connection success", socket.id);
       // listen for message from user
 
-      socket.on("join", async (newMessage) => {
-        console.log("newMessage", newMessage);
+      socket.on("join", async (notificationGet) => {
+        console.log("notificationGet", notificationGet);
 
         // emit message from server to user
-        socket.join(newMessage.USER_ID);
+        socket.join(notificationGet.USER_ID);
 
-        io.sockets.in(newMessage.USER_ID).emit("newMessage", {
+        io.sockets.in(notificationGet.USER_ID).emit("notificationGet", {
           USER_DATA: await GetNotificationData(
-            newMessage.CUSTOMER_ID,
-            newMessage.USER_ID
+            notificationGet.CUSTOMER_ID,
+            notificationGet.USER_ID
           ),
         });
       });
