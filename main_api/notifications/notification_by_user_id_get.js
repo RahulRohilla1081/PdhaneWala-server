@@ -84,7 +84,7 @@ module.exports = {
       console.log("Connection success", socket.id);
       // listen for message from user
 
-      socket.on("join", async (notificationGet) => {
+      socket.on("NotificationJoin", async (notificationGet) => {
         console.log("notificationGet", notificationGet);
 
         // emit message from server to user
