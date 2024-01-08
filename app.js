@@ -102,6 +102,9 @@ var notificationByUserIdGetRouter =
 var notificationsSeenUpdateRouter = require("./main_api/notifications/notifications_seen_update");
 var notificationsDeactivateRouter = require("./main_api/notifications/notifications_deactivate");
 
+var chatSaveRouter = require("./main_api/chat/chat_save.js").router;
+var chatGetRouter = require("./main_api/chat/chat_get.js").router;
+
 app.use("/main_api/testing/testing", testingTestingRouter);
 app.use("/main_api/testing/testing_data", testingDataRouter);
 app.use("/main_api/tambula_generator", tambulaGeneratorRouter);
@@ -265,6 +268,9 @@ app.use(
   "/main_api/notifications/notifications_deactivate",
   notificationsDeactivateRouter
 );
+
+app.use("/main_api/chat/chat_save", chatSaveRouter);
+app.use("/main_api/chat/chat_get", chatGetRouter);
 
 app.use("/main_api/user/user_profile_update", userProfileUpdateRouter);
 
