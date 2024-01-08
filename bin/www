@@ -40,6 +40,8 @@ const io = socketIO(server, {
 });
 var customerEmailVerified = require("../main_api/login/customer_email_verified_update.js");
 customerEmailVerified.start(io);
+var sendNotifications = require("../main_api/notifications/notification_by_user_id_get.js");
+sendNotifications.start(io);
 // // make connection with user from server side
 // io.on("connection", (socket) => {
 //   console.log("Connection success", socket.id);

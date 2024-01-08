@@ -213,6 +213,7 @@ router.get("/", async function (req, res, next) {
         },
       ];
     }
+    
 
     res.send(data_filtered);
   } catch (err) {

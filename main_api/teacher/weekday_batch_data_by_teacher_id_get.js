@@ -19,7 +19,7 @@ router.get("/", async function (req, res, next) {
 
     var weekdayBatches = await db
       .collection("batch_master")
-      .aggregate([
+      .aggregate([  
         { $match: { CUSTOMER_ID: CUSTOMER_ID, TEACHER_ID: TEACHER_ID } },
         { $unwind: "$BATCH_TIMING" },
         { $match: { "BATCH_TIMING.BATCH_DAY": { $regex: weekdayRegex } } },

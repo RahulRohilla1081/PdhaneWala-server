@@ -90,7 +90,6 @@ var testingRouter = require("./main_api/testing.js");
 var testingDataRouter = require("./main_api/testing/texting_data.js");
 var dbBackupRouter = require("./main_api/testing/db_backup.js");
 
-
 var certificateTemplateCreateRouter = require("./main_api/certificate_template/certificate_template_create");
 var certificateTemplateUpdateRouter = require("./main_api/certificate_template/certificate_template_update");
 var certificateTemplatebyCustomerIDGetRouter = require("./main_api/certificate_template/certificate_template_by_customerID_get");
@@ -98,7 +97,8 @@ var certificateTemplatebyCustomerIDGetRouter = require("./main_api/certificate_t
 var notificationsCreateRouter = require("./main_api/notifications/notifications_create");
 var notificationsUpdateRouter = require("./main_api/notifications/notifications_update");
 var notificationsGetRouter = require("./main_api/notifications/notifications_get");
-var seenNotificationByUserIdGetRouter = require("./main_api/notifications/seen_notification_by_user_id_get");
+var notificationByUserIdGetRouter =
+  require("./main_api/notifications/notification_by_user_id_get.js").router;
 var notificationsSeenUpdateRouter = require("./main_api/notifications/notifications_seen_update");
 var notificationsDeactivateRouter = require("./main_api/notifications/notifications_deactivate");
 
@@ -244,7 +244,6 @@ app.use(
 );
 app.use("/main_api/testing/db_backup", dbBackupRouter);
 
-
 app.use(
   "/main_api/notifications/notifications_create",
   notificationsCreateRouter
@@ -259,8 +258,8 @@ app.use(
 );
 app.use("/main_api/notifications/notifications_get", notificationsGetRouter);
 app.use(
-  "/main_api/notifications/seen_notification_by_user_id_get",
-  seenNotificationByUserIdGetRouter
+  "/main_api/notifications/notification_by_user_id_get",
+  notificationByUserIdGetRouter
 );
 app.use(
   "/main_api/notifications/notifications_deactivate",
