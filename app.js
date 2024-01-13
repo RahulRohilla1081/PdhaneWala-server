@@ -279,6 +279,9 @@ app.use("/payment/success", rozerpay_success);
 
 app.use("/main_api/testing", testingRouter);
 
+var chattersGetRouter = require("./main_api/chatters/chatters_get.js");
+app.use("/main_api/chatters/chatters_get", chattersGetRouter);
+
 app.use(express.static(__dirname + "/assets/student_id_uploads"));
 app.use(express.static(__dirname + "/assets/student_profile_uploads"));
 app.use(express.static(__dirname + "/assets/teacher_id_uploads"));
