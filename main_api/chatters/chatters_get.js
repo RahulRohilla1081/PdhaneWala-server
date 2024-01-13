@@ -13,12 +13,13 @@ router.get("/", async function (req, res, next) {
     let CUSTOMER_ID = req.query.CUSTOMER_ID;
     let USER_ID = req.query.USER_ID;
     let db = await dbConnect();
+    let student_data = 0;
+    let teachers_data = 0;
 
     let user_data = await db
       .collection("user_db")
       .find({ CUSTOMER_ID: CUSTOMER_ID, USER_ID: USER_ID })
       .toArray();
-
     if (user_data.length > 0 && user_data[0].ROLE_ID.includes("STUDENT")) {
       let user_batches = [];
       let user = user_data[0];
@@ -36,15 +37,78 @@ router.get("/", async function (req, res, next) {
       batchData.map((val) => {
         teachers.push(val.TEACHER_ID);
       });
-      let teachers_data = await db
+      teachers_data = await db
         .collection("user_db")
         .find({ CUSTOMER_ID: CUSTOMER_ID, USER_ID: { $in: teachers } })
-        .project({ CUSTOMER_ID: 1, USER_ID: 1, _id: 0, USER_PROFILE_URL: 1 })
+        .project({
+          CUSTOMER_ID: 1,
+          USER_ID: 1,
+          USER_FULLNAME: 1,
+          _id: 0,
+          USER_PROFILE_URL: 1,
+        })
         .toArray();
-    res.send({student:0,teachers:teachers_data});
-
+      // res.send({ student: 0, teachers: teachers_data });
     }
-
+    if (user_data.length > 0 && user_data[0].ROLE_ID.includes("TEACHER")) {
+      let teacher_batch = await db
+        .collection("batch_master")
+        .find({ TEACHER_ID: USER_ID })
+        .toArray();
+      let batchArr = [];
+      teacher_batch.map((val) => {
+        batchArr.push(val.BATCH_NO);
+      });
+      let batchSet = [...new Set(batchArr)];
+      student_data = await db
+        .collection("user_db")
+        .find({
+          CUSTOMER_ID: CUSTOMER_ID,
+          STUDENT_COURSE: {
+            $elemMatch: { BATCH_NO: { $in: batchSet } },
+          },
+        })
+        .project({
+          CUSTOMER_ID: 1,
+          USER_ID: 1,
+          USER_FULLNAME: 1,
+          _id: 0,
+          USER_PROFILE_URL: 1,
+        })
+        .toArray();
+    }
+    if (user_data.CUSTOMER_ID == undefined) {
+      student_data = await db
+        .collection("user_db")
+        .find({
+          CUSTOMER_ID: USER_ID,
+          ROLE_ID: "STUDENT",
+          // ROLE_ID: { $in: ["STUDENT"] },
+        })
+        .project({
+          CUSTOMER_ID: 1,
+          USER_ID: 1,
+          USER_FULLNAME: 1,
+          _id: 0,
+          USER_PROFILE_URL: 1,
+        })
+        .toArray();
+      teachers_data = await db
+        .collection("user_db")
+        .find({
+          CUSTOMER_ID: USER_ID,
+          ROLE_ID: { $in: ["TEACHER"] },
+        })
+        .project({
+          CUSTOMER_ID: 1,
+          USER_ID: 1,
+          USER_FULLNAME: 1,
+          _id: 0,
+          USER_PROFILE_URL: 1,
+        })
+        .toArray();
+    }
+    res.send({ student: student_data, teachers: teachers_data });
   } catch (err) {
     console.log(err);
     axios_function_all_APIs_catch(__filename, res.statusCode, req.query);
