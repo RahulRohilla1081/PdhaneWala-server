@@ -20,64 +20,9 @@ router.get("/", async function (req, res, next) {
       .collection("user_db")
       .find({ CUSTOMER_ID: CUSTOMER_ID, USER_ID: USER_ID })
       .toArray();
-    if (user_data.length > 0 && user_data[0].ROLE_ID.includes("STUDENT")) {
-      let user_batches = [];
-      let user = user_data[0];
-      user.STUDENT_COURSE.map((val) => {
-        user_batches.push(val.BATCH_NO);
-      });
-      let batchSet = [...new Set(user_batches)];
-      console.log("batchSet", batchSet);
-      let batchData = await db
-        .collection("batch_master")
-        .find({ CUSTOMER_ID: CUSTOMER_ID, BATCH_NO: { $in: batchSet } })
-        .toArray();
-      console.log("mybatch", batchData);
-      let teachers = [];
-      batchData.map((val) => {
-        teachers.push(val.TEACHER_ID);
-      });
-      teachers_data = await db
-        .collection("user_db")
-        .find({ CUSTOMER_ID: CUSTOMER_ID, USER_ID: { $in: teachers } })
-        .project({
-          CUSTOMER_ID: 1,
-          USER_ID: 1,
-          USER_FULLNAME: 1,
-          _id: 0,
-          USER_PROFILE_URL: 1,
-        })
-        .toArray();
-      // res.send({ student: 0, teachers: teachers_data });
-    }
-    if (user_data.length > 0 && user_data[0].ROLE_ID.includes("TEACHER")) {
-      let teacher_batch = await db
-        .collection("batch_master")
-        .find({ TEACHER_ID: USER_ID })
-        .toArray();
-      let batchArr = [];
-      teacher_batch.map((val) => {
-        batchArr.push(val.BATCH_NO);
-      });
-      let batchSet = [...new Set(batchArr)];
-      student_data = await db
-        .collection("user_db")
-        .find({
-          CUSTOMER_ID: CUSTOMER_ID,
-          STUDENT_COURSE: {
-            $elemMatch: { BATCH_NO: { $in: batchSet } },
-          },
-        })
-        .project({
-          CUSTOMER_ID: 1,
-          USER_ID: 1,
-          USER_FULLNAME: 1,
-          _id: 0,
-          USER_PROFILE_URL: 1,
-        })
-        .toArray();
-    }
-    if (user_data.CUSTOMER_ID == undefined) {
+
+    if (user_data[0].CUSTOMER_ID == undefined) {
+
       student_data = await db
         .collection("user_db")
         .find({
@@ -107,7 +52,66 @@ router.get("/", async function (req, res, next) {
           USER_PROFILE_URL: 1,
         })
         .toArray();
+    } else {
+      if (user_data.length > 0 && user_data[0].ROLE_ID.includes("STUDENT")) {
+        let user_batches = [];
+        let user = user_data[0];
+        user.STUDENT_COURSE.map((val) => {
+          user_batches.push(val.BATCH_NO);
+        });
+        let batchSet = [...new Set(user_batches)];
+        console.log("batchSet", batchSet);
+        let batchData = await db
+          .collection("batch_master")
+          .find({ CUSTOMER_ID: CUSTOMER_ID, BATCH_NO: { $in: batchSet } })
+          .toArray();
+        console.log("mybatch", batchData);
+        let teachers = [];
+        batchData.map((val) => {
+          teachers.push(val.TEACHER_ID);
+        });
+        teachers_data = await db
+          .collection("user_db")
+          .find({ CUSTOMER_ID: CUSTOMER_ID, USER_ID: { $in: teachers } })
+          .project({
+            CUSTOMER_ID: 1,
+            USER_ID: 1,
+            USER_FULLNAME: 1,
+            _id: 0,
+            USER_PROFILE_URL: 1,
+          })
+          .toArray();
+        // res.send({ student: 0, teachers: teachers_data });
+      }
+      if (user_data.length > 0 && user_data[0].ROLE_ID.includes("TEACHER")) {
+        let teacher_batch = await db
+          .collection("batch_master")
+          .find({ TEACHER_ID: USER_ID })
+          .toArray();
+        let batchArr = [];
+        teacher_batch.map((val) => {
+          batchArr.push(val.BATCH_NO);
+        });
+        let batchSet = [...new Set(batchArr)];
+        student_data = await db
+          .collection("user_db")
+          .find({
+            CUSTOMER_ID: CUSTOMER_ID,
+            STUDENT_COURSE: {
+              $elemMatch: { BATCH_NO: { $in: batchSet } },
+            },
+          })
+          .project({
+            CUSTOMER_ID: 1,
+            USER_ID: 1,
+            USER_FULLNAME: 1,
+            _id: 0,
+            USER_PROFILE_URL: 1,
+          })
+          .toArray();
+      }
     }
+
     res.send({ student: student_data, teachers: teachers_data });
   } catch (err) {
     console.log(err);
