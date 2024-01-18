@@ -33,8 +33,8 @@ router.post("/", async function (req, res, next) {
 // module.exports = router;
 const saveChatData = async (chatPayload) => {
   console.log("Get User data ", chatPayload);
+  chatPayload.isSeen = false;
   let db = await dbConnect();
-
   db.collection("chat").insertOne(chatPayload);
 
   return "chat saved in DB";
@@ -56,6 +56,9 @@ module.exports = {
 
         io.sockets.in(chatPayload.sender_id).emit("saveChat", {
           USER_DATA: await saveChatData(chatPayload),
+        });
+        io.sockets.in(chatPayload.receiver_id).emit("sendChat", {
+          CHAT_DATA: chatPayload,
         });
       });
 
