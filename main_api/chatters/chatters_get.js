@@ -13,8 +13,8 @@ router.get("/", async function (req, res, next) {
     let CUSTOMER_ID = req.query.CUSTOMER_ID;
     let USER_ID = req.query.USER_ID;
     let db = await dbConnect();
-    let student_data = 0;
-    let teachers_data = 0;
+    let student_data = [];
+    let teachers_data = [];
 
     let user_data = await db
       .collection("user_db")
