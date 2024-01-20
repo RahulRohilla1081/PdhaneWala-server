@@ -68,7 +68,7 @@ module.exports = {
         socket.join(chatPayload.sender_id);
 
         io.sockets.in(chatPayload.sender_id).emit("saveChat", {
-          USER_DATA: await saveChatData(chatPayload),
+          CHAT_DATA: await saveChatData(chatPayload),
         });
       });
 

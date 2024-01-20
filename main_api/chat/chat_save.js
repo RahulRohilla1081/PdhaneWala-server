@@ -46,25 +46,25 @@ module.exports = {
   start: function (io) {
     io.sockets.on("connection", (socket) => {
       console.log("Connection success", socket.id);
-      // listen for message from user
+
+      socket.on("joinUser", function (data) {
+        console.log("jahsgjasgj", data);
+        if(data.AUTH_ID!=undefined && data.CUSTOMER_ID!=undefined){
+          socket.join(data.AUTH + data.CUSTOMER_ID); // We are using room of socket io
+        }
+      });
 
       socket.on("ChatJoin", async (chatPayload) => {
         console.log("chatPayload", chatPayload);
-
-        // emit message from server to user
-        socket.join(chatPayload.sender_id);
-
-        io.sockets.in(chatPayload.sender_id).emit("saveChat", {
-          USER_DATA: await saveChatData(chatPayload),
-        });
-        io.sockets.in(chatPayload.receiver_id).emit("sendChat", {
-          CHAT_DATA: chatPayload,
-        });
+        await saveChatData(chatPayload),
+          io.sockets
+            .in(chatPayload.receiver_id + chatPayload.receiver_customer_id)
+            .emit("receiveChat", {
+              CHAT_DATA: chatPayload,
+            });
       });
 
-      // socket.on("disconnect", () => {
-      //   console.log("Connection disconnected", socket.id);
-      // });
+      
     });
   },
 };

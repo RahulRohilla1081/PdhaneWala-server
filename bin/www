@@ -47,8 +47,8 @@ sendNotifications.start(io);
 var chatSave = require("../main_api/chat/chat_save.js");
 chatSave.start(io);
 
-var chatGet = require("../main_api/chat/chat_get.js");
-chatGet.start(io);
+// var chatGet = require("../main_api/chat/chat_get.js");
+// chatGet.start(io);
 // // make connection with user from server side
 // io.on("connection", (socket) => {
 //   console.log("Connection success", socket.id);
