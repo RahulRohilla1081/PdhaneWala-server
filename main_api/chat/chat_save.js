@@ -50,7 +50,7 @@ module.exports = {
       socket.on("joinUser", function (data) {
         console.log("jahsgjasgj", data);
         if(data.AUTH_ID!=undefined && data.CUSTOMER_ID!=undefined){
-          socket.join(data.AUTH + data.CUSTOMER_ID); // We are using room of socket io
+          socket.join(data.AUTH_ID + data.CUSTOMER_ID); // We are using room of socket io
         }
       });
 

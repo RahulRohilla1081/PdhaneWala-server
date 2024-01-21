@@ -9,11 +9,15 @@ API url: -
 http://localhost:9000/main_api/chatters/available_chatters_get?CUSTOMER_ID=PWC0000001&USER_ID=PWS00001
 */
 
-router.get("/", async function (req, res, next) {
+router.get("/", async function (req, res, next) {});
+
+const saveChatData = async (data) => {
   try {
-    let CUSTOMER_ID = req.query.CUSTOMER_ID;
-    let USER_ID = req.query.USER_ID;
+    let CUSTOMER_ID = data.CUSTOMER_ID;
+    let USER_ID = data.USER_ID;
     let db = await dbConnect();
+
+    var returnData;
 
     axios
       .get(
@@ -68,19 +72,51 @@ router.get("/", async function (req, res, next) {
               }
             });
           }
-          res.send({
+          returnData = {
             message: "chat history available",
             data: available_chatter,
-          });
+          };
+          // res.send({
+          //   message: "chat history available",
+          //   data: available_chatter,
+          // });
         } else {
-          res.send({ message: "No chat history", data: [] });
+          // res.send({ message: "No chat history", data: [] });
+          returnData = { message: "No chat history", data: [] };
         }
       });
   } catch (err) {
     console.log(err);
     axios_function_all_APIs_catch(__filename, res.statusCode, req.query);
-    res.send({ message: "Error in " + __filename });
+    // res.send({ message: "Error in " + __filename });
+    returnData = { message: "Error in " + __filename };
   }
-});
+  return returnData;
+};
 
-module.exports = router;
+module.exports = {
+  router: router,
+
+  start: function (io) {
+    io.sockets.on("connection", (socket) => {
+      console.log("Connection success", socket.id);
+
+      // socket.on("joinUser", function (data) {
+      //   console.log("jahsgjasgj", data);
+      //   if (data.AUTH_ID != undefined && data.CUSTOMER_ID != undefined) {
+      //     socket.join(data.AUTH_ID + data.CUSTOMER_ID);
+      //   }
+      // });
+
+      socket.on("availableChatterGet", async (data) => {
+        console.log("chatPayload", data);
+        await saveChatData(chatPayload),
+          io.sockets
+            .in(data.USER_ID + data.CUSTOMER_ID)
+            .emit("availableChatterData", {
+              CHATTER_DATA: await saveChatData(data),
+            });
+      });
+    });
+  },
+};

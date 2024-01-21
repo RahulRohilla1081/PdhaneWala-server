@@ -35,7 +35,8 @@ var server = http.createServer(app);
  */
 const io = socketIO(server, {
   cors: {
-    origin: DOMAIN_URL,
+    // origin: DOMAIN_URL,
+    origin: "*",
   },
 });
 var customerEmailVerified = require("../main_api/login/customer_email_verified_update.js");
@@ -46,6 +47,9 @@ sendNotifications.start(io);
 
 var chatSave = require("../main_api/chat/chat_save.js");
 chatSave.start(io);
+
+var chatHistory = require("../main_api/chat/chat_history_get.js");
+chatHistory.start(io);
 
 // var chatGet = require("../main_api/chat/chat_get.js");
 // chatGet.start(io);
