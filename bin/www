@@ -48,6 +48,9 @@ sendNotifications.start(io);
 var chatSave = require("../main_api/chat/chat_save.js");
 chatSave.start(io);
 
+var availableChatters = require("../main_api/chatters/available_chatters_get.js");
+availableChatters.start(io);
+
 var chatHistory = require("../main_api/chat/chat_history_get.js");
 chatHistory.start(io);
 
