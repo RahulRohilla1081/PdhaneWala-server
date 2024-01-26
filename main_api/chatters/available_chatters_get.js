@@ -103,19 +103,11 @@ module.exports = {
             console.log("asdasda", response);
             io.sockets
               .in(data.USER_ID + data.CUSTOMER_ID)
-              .emit("availableChatterData", {
-                CHATTER_DATA: response,
-              });
+              .emit("availableChatterData", response);
           })
           .catch((err) => {
             console.log("Error", err);
           });
-        // availableChatters(data).then((response)=>{
-        //   console.log("sdasdas",response);
-
-        // }).catch((err)=>{
-        //   console.log("errr",);
-        // })
       });
     });
   },
