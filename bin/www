@@ -54,6 +54,9 @@ availableChatters.start(io);
 var chatHistory = require("../main_api/chat/chat_history_get.js");
 chatHistory.start(io);
 
+var chatTyping = require("../main_api/chat/chat_typing.js");
+chatTyping.start(io);
+
 // var chatGet = require("../main_api/chat/chat_get.js");
 // chatGet.start(io);
 // // make connection with user from server side
